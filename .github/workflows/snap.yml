@@ -7,8 +7,11 @@
 #     only snapshot-release carries the vulnerable mutable-ref checkout
 #   - WASM / Go / build:compiler / release steps dropped — the sink is
 #     `pnpm install` (lifecycle scripts), everything after is noise for the proof
-#   - Admin gate, resolve-pr-refs, checkout with head_ref: UNCHANGED (these are
-#     the vulnerable pattern)
+#   - Upstream `getSnapshotName` step omitted — it validates `!preview <name>`
+#     and only affects comment format; the TOCTOU sink is downstream. Dropping
+#     it lets the operator post plain `!preview`.
+#   - Admin gate, resolve-pr-refs (WITH its `token:` input — load-bearing),
+#     checkout with head_ref: UNCHANGED. These are the vulnerable pattern.
 name: Snapshot
 
 on:
@@ -45,6 +48,13 @@ jobs:
       - name: Resolve PR refs
         id: refs
         uses: eficode/resolve-pr-refs@f7e14e739786aae2053e162c678cd4c3c2edaa83
+        # NOTE: `token:` is load-bearing — the action calls the GitHub REST
+        # API to resolve the branch name for the PR referenced by this
+        # issue_comment event. Omit and the step fails with
+        # "Parameter token or opts.auth is required" before the vulnerable
+        # checkout runs. Faithful to upstream withastro/compiler release.yml.
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
