@@ -1,5 +1,5 @@
 # axkri
 
-Snapshot preview helper.
+A tiny CI helper.
 
-Comment `!preview` on a PR to run the snapshot pipeline.
+> Why do JS developers wear glasses? Because they can't C#. 👓
