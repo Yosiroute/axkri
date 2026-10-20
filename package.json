@@ -1,0 +1,7 @@
+{
+  "name": "axkri",
+  "version": "0.0.0",
+  "private": true,
+  "description": "minimal workspace root for ci",
+  "packageManager": "pnpm@9.0.0"
+}
